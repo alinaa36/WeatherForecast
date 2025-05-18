@@ -18,7 +18,7 @@ export class SubscriptionController {
       token,
       SubscriptionAction.CONFIRM,
     );
-    return { message: 'Subscription confirmed successfully!' };
+    return true;
   }
 
   @Get('unsubscribe/:token')
@@ -27,6 +27,6 @@ export class SubscriptionController {
       token,
       SubscriptionAction.UNSUBSCRIBE,
     );
-    return { message: 'Subscription confirmed successfully!' };
+    return true;
   }
 }

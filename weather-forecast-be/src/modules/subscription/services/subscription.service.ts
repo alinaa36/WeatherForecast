@@ -5,7 +5,7 @@ import { WeatherService } from '../../weather/services/weather.service';
 import { ConfigService } from '@nestjs/config';
 import { SubscriptionAction } from '../enum/subscription.unem';
 import { SubscriptionRepository } from '../repository/subscription.repository';
-import { TokenService } from 'src/modules/token/services/token.service';
+import { TokenService } from '../../../modules/token/services/token.service';
 import { SendConfirmation } from '../enum/send-email.enum';
 import { Frequency } from '../enum/frequency.enum';
 
