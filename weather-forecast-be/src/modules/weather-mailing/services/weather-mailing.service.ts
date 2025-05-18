@@ -6,7 +6,7 @@ import { Cron } from '@nestjs/schedule';
 import { Frequency } from '../../subscription/enum/frequency.enum';
 import { TokenService } from '../../token/services/token.service';
 import { ExpiresTime } from '../../token/enum/time.unem';
-import { SendUnSubscribe } from 'src/modules/subscription/enum/send-email.enum';
+import { SendUnSubscribe } from '../../../modules/subscription/enum/send-email.enum';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

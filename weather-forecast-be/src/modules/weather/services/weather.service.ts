@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import axios from "axios";
+
 interface WeatherData {
   temp_c: number;
   humidity: number;
