@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SendUnSubscribe } from '../../modules/subscription/enum/send-email.enum';
+import { SendUnSubscribe } from '../subscription/enum/send-email.enum';
 import { WeatherMailingService } from './services/weather-mailing.service';
 import { WeatherService } from '../weather/services/weather.service';
 import { MailService } from '../mail/services/mail.service';
