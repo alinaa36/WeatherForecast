@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SubscriptionService } from './subscription.service';
 import { SubscriptionRepository } from '../repository/subscription.repository';
 import { MailService } from '../../mail/services/mail.service';
-import { TokenService } from '../../../modules/token/services/token.service';
+import { TokenService } from '../../token/services/token.service';
 import { WeatherService } from '../../weather/services/weather.service';
 import { ConfigService } from '@nestjs/config';
 import { NotFoundException } from '@nestjs/common';
