@@ -78,63 +78,63 @@ describe('SubscriptionController (e2e)', () => {
     return `test${Date.now()}@example.com`;
   }
 
-  it('/subscribe (POST) - успішна підписка', async () => {
+it('/subscribe (POST) - successful subscription', async () => {
     const subscriptionDto = {
-      email: generateEmail(),
-      city: 'Kyiv',
-      frequency: Frequency.HOURLY,
+        email: generateEmail(),
+        city: 'Kyiv',
+        frequency: Frequency.HOURLY,
     };
 
     const response = await request(app.getHttpServer())
-      .post('/api/subscribe')
-      .send(subscriptionDto)
-      .expect(201);
+        .post('/api/subscribe')
+        .send(subscriptionDto)
+        .expect(201);
 
     expect(response.body).toHaveProperty('email', subscriptionDto.email);
     expect(response.body).toHaveProperty('city', subscriptionDto.city);
     expect(response.body).toHaveProperty(
-      'frequency',
-      subscriptionDto.frequency,
+        'frequency',
+        subscriptionDto.frequency,
     );
     expect(response.body).toHaveProperty('confirmationToken');
 
     token = response.body.confirmationToken;
-  });
+});
 
-  it('/subscribe (POST) - некоректний запит (без email)', async () => {
+it('/subscribe (POST) - invalid request (missing email)', async () => {
     const badDto = {
-      city: 'Kyiv',
-      frequency: 'HOURLY',
+        city: 'Kyiv',
+        frequency: 'HOURLY',
     };
 
     await request(app.getHttpServer())
-      .post('/api/subscribe')
-      .send(badDto)
-      .expect(400);
-  });
+        .post('/api/subscribe')
+        .send(badDto)
+        .expect(400);
+});
 
-  it('/confirm/:token (GET) - підтвердження підписки', async () => {
+it('/confirm/:token (GET) - subscription confirmation', async () => {
     const subscriptionDto = {
-      email: generateEmail(),
-      city: 'Kyiv',
-      frequency: Frequency.HOURLY,
+        email: generateEmail(),
+        city: 'Kyiv',
+        frequency: Frequency.HOURLY,
     };
 
     const subscribeResponse = await request(app.getHttpServer())
-      .post('/api/subscribe')
-      .send(subscriptionDto)
-      .expect(201);
+        .post('/api/subscribe')
+        .send(subscriptionDto)
+        .expect(201);
 
     token = subscribeResponse.body.confirmationToken;
 
     const confirmResponse = await request(app.getHttpServer())
-      .get(`/api/confirm/${token}`)
-      .expect(200);
+        .get(`/api/confirm/${token}`)
+        .expect(200);
 
     expect(confirmResponse.body).toHaveProperty('success', true);
-  });
+});
 
-  it('/unsubscribe/:token (GET) - відписка', async () => {
+  it('/unsubscribe/:token (GET) - Unsubscribe', async () => {
     const subscriptionDto = {
       email: generateEmail(),
       city: 'Kyiv',
