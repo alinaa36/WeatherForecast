@@ -19,6 +19,7 @@ jobs:
         run: npm ci
 
       - name: Run full E2E test flow
+        working-directory: ./weather-forecast-be
         env:
           npm_config_name: test_migration_name
         run: npm run test:e2e:full
