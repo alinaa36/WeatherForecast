@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateSubscriptionDTO } from '../dtos/create-subscription.dto';
 import { SubscriptionService } from '../services/subscription.service';
-import { SubscriptionAction } from '../enum/subscription.unem';
+import { SubscriptionAction } from '../enum/subscription.enum';
 
 @Controller()
 export class SubscriptionController {
@@ -9,7 +9,7 @@ export class SubscriptionController {
 
   @Post('subscribe')
   async createSubscription(@Body() subscription: CreateSubscriptionDTO) {
-    await this.subscriptionService.create(subscription);
+    return await this.subscriptionService.create(subscription);
   }
 
   @Get('confirm/:token')
@@ -18,7 +18,7 @@ export class SubscriptionController {
       token,
       SubscriptionAction.CONFIRM,
     );
-    return true;
+    return { success: true };
   }
 
   @Get('unsubscribe/:token')
@@ -27,6 +27,6 @@ export class SubscriptionController {
       token,
       SubscriptionAction.UNSUBSCRIBE,
     );
-    return true;
+    return { success: true };
   }
 }

@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AppConfigModule } from './config/app-config/config.module';
 import { DatabaseModule } from './database/database.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
@@ -17,7 +15,7 @@ import { MailModule } from './modules/mail/mail.module';
     WeatherMailingModule,
     MailModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

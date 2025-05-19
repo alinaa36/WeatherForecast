@@ -1,6 +1,6 @@
 export enum SendConfirmation {
   SUBJECT = 'Confirm email subscription',
-  TEMPLATE = 'subscriptionconfirmation-email',
+  TEMPLATE = 'subscription-confirmation-email',
 }
 
 export enum SendUnSubscribe {

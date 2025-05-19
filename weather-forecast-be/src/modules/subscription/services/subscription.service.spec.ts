@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import { NotFoundException } from '@nestjs/common';
 import { SendConfirmation } from '../enum/send-email.enum';
 import { Frequency } from '../enum/frequency.enum';
-import { SubscriptionAction } from '../enum/subscription.unem';
+import { SubscriptionAction } from '../enum/subscription.enum';
 import { Subscription } from '../entity/subscription.entity';
 
 describe('SubscriptionService', () => {
@@ -210,8 +210,7 @@ describe('SubscriptionService', () => {
         }),
       );
 
-      // result is Promise.all([createSubscription, send]), so expect first element
-      expect(result[0]).toMatchObject({
+      expect(result).toMatchObject({
         id: '2',
         email: dto.email,
         city: dto.city,
@@ -325,8 +324,7 @@ describe('SubscriptionService', () => {
 
   describe('validateCity (tested indirectly)', () => {
     it('should return false if weatherService.getWeather throws error', async () => {
-      weatherService.getWeather.mockRejectedValue(new Error('City not found'));
-      // validateCity is private, test via create:
+      weatherService.getWeather.mockRejectedValue(new NotFoundException('City not found'));
       await expect(
         service.create({
           email: 'a@a.com',

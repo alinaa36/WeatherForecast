@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { WeatherService } from './services/weather.service';
+import { NotFoundException } from '@nestjs/common';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -62,7 +63,7 @@ describe('WeatherService', () => {
       statusText: 'OK',
       headers: {},
       config: {
-          url: ''
+        url: '',
       },
     });
 
@@ -80,12 +81,12 @@ describe('WeatherService', () => {
     expect(result).toEqual(mockWeatherData.current);
   });
 
-  it('should return null on error', async () => {
+  it('should throw NotFoundException on error', async () => {
     mockedAxios.get.mockRejectedValueOnce(new Error('API error'));
 
-    const result = await service.getWeather('UnknownCity');
-
-    expect(mockedAxios.get).toHaveBeenCalled();
-    expect(result).toBeNull();
+    await expect(service.getWeather('UnknownCity')).rejects.toMatchObject({
+      message: `Weather for "UnknownCity" not found`,
+      name: 'NotFoundException',
+    });
   });
 });

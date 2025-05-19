@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Migration1747264460762 implements MigrationInterface {
-    name = 'Migration1747264460762'
+export class  $npmConfigName1747612133134 implements MigrationInterface {
+    name = ' $npmConfigName1747612133134'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."Subscription_frequency_enum" AS ENUM('daily', 'hourly')`);

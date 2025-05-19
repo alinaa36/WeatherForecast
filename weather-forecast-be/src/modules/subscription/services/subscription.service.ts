@@ -3,7 +3,7 @@ import { MailService } from '../../mail/services/mail.service';
 import { CreateSubscriptionDTO } from '../dtos/create-subscription.dto';
 import { WeatherService } from '../../weather/services/weather.service';
 import { ConfigService } from '@nestjs/config';
-import { SubscriptionAction } from '../enum/subscription.unem';
+import { SubscriptionAction } from '../enum/subscription.enum';
 import { SubscriptionRepository } from '../repository/subscription.repository';
 import { TokenService } from '../../token/services/token.service';
 import { SendConfirmation } from '../enum/send-email.enum';
@@ -20,7 +20,7 @@ export class SubscriptionService {
     private readonly weatherService: WeatherService,
     private readonly configService: ConfigService,
   ) {
-    this.baseUrl = this.configService.get<string>('BASE_URL')!;
+    this.baseUrl = this.configService.get<string>('app.url')!;
   }
 
   async create(subscriptionDto: CreateSubscriptionDTO) {
@@ -64,7 +64,7 @@ export class SubscriptionService {
       return existingSubscription;
     }
 
-    const newSubscription = await Promise.all([
+    const [subscription] = await Promise.all([
       this.subscriptionRepository.createSubscription({
         ...subscriptionDto,
         confirmationToken: token,
@@ -79,8 +79,7 @@ export class SubscriptionService {
         },
       }),
     ]);
-
-    return newSubscription;
+    return subscription;
   }
 
   async getSubscription(email: string, city: string) {

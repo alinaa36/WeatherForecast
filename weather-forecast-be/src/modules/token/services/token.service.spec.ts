@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 import { AuthPayload } from 'src/modules/token/interfaces/payload.interface';
-import { TokenService } from './services/token.service';
+import { TokenService } from './token.service';
 
 describe('TokenService', () => {
   let service: TokenService;

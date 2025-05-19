@@ -8,11 +8,20 @@ export default () => ({
   },
   app: {
     port: process.env.PORT,
+    url: process.env.BASE_URL,
+    globalPrefix: process.env.GLOBAL_PREFIX,
   },
   mail: {
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD,
+  },
+  token: {
+    secret: process.env.SECRET_KEY,
+  },
+  weather: {
+    apiKey: process.env.WEATHER_API_KEY,
+    url: process.env.WEATHER_URL,
   },
 });

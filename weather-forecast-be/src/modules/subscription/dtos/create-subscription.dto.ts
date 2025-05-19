@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty } from '@nestjs/class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional } from '@nestjs/class-validator';
 import { Frequency } from '../enum/frequency.enum';
 
 export class CreateSubscriptionDTO {
@@ -9,6 +9,7 @@ export class CreateSubscriptionDTO {
   @IsNotEmpty()
   city: string;
 
+  @IsOptional()
   @IsEnum(Frequency)
   frequency: Frequency;
 }

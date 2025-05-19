@@ -1,36 +1,19 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import axios from "axios";
-
-interface WeatherData {
-  temp_c: number;
-  humidity: number;
-  condition: {
-    text: string;
-    icon: string;
-  };
-  wind_kph: number;
-  wind_dir: string;
-}
-
-interface WeatherResponse {
-  current: WeatherData;
-  location: {
-    name: string;
-    country: string;
-  };
-}
+import { WeatherData } from "../interfaces/weather-data.interface";
+import { WeatherResponse } from "../interfaces/weather-response.interfase";
 
 @Injectable()
 export class WeatherService {
   private apiKey: string;
   private apiBaseUrl: string;
   constructor(private readonly configServise: ConfigService) {
-    this.apiKey = this.configServise.get<string>('WEATHER_API_KEY')!;
-    this.apiBaseUrl = this.configServise.get<string>('WEATHER_URL')!;
+    this.apiKey = this.configServise.get<string>('weather.apiKey')!;
+    this.apiBaseUrl = this.configServise.get<string>('weather.url')!;
   }
 
-  async getWeather(city: string): Promise<WeatherData | null> {
+  async getWeather(city: string): Promise<WeatherData> {
     try {
       const response = await axios.get<WeatherResponse>(
         `${this.apiBaseUrl}/current.json`,
@@ -44,8 +27,8 @@ export class WeatherService {
 
       return response.data.current;
     } catch (error) {
-      console.log(error);
-      return null;
+      console.error(error?.response?.data || error.message);
+      throw new NotFoundException(`Weather for "${city}" not found`);
     }
   }
 }

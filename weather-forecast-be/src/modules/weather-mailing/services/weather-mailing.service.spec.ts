@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SendUnSubscribe } from '../subscription/enum/send-email.enum';
-import { WeatherMailingService } from './services/weather-mailing.service';
-import { WeatherService } from '../weather/services/weather.service';
-import { MailService } from '../mail/services/mail.service';
-import { SubscriptionService } from '../subscription/services/subscription.service';
-import { TokenService } from '../token/services/token.service';
+import { SendUnSubscribe } from '../../subscription/enum/send-email.enum';
+import { WeatherMailingService } from './../services/weather-mailing.service';
+import { WeatherService } from '../../weather/services/weather.service';
+import { MailService } from '../../mail/services/mail.service';
+import { SubscriptionService } from '../../subscription/services/subscription.service';
+import { TokenService } from '../../token/services/token.service';
 import { ConfigService } from '@nestjs/config';
-import { Frequency } from '../subscription/enum/frequency.enum';
-import { ExpiresTime } from '../token/enum/time.unem';
+import { Frequency } from '../../subscription/enum/frequency.enum';
+import { ExpiresTime } from '../../token/enum/time.enum';
 
 describe('WeatherMailingService', () => {
   let service: WeatherMailingService;
