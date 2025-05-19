@@ -51,9 +51,9 @@ export class WeatherMailingService {
       });
     }
   }
-
-  @Cron('*/5 * * * *')
-  async handleEveryHour() {
+  
+  @Cron('0 * * * *')
+  async handleEveryFullHour() {
     await this.sendWeatherByFrequency(Frequency.HOURLY);
   }
 
