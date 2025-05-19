@@ -1,8 +1,8 @@
-# 🌦️ Weather Forecast Service
+#  Weather Forecast Service
 
 A NestJS-based weather notification service that allows users to subscribe to weather updates via email. Users can choose a city and the frequency (daily or hourly) of updates.
 
-## 📡 API Endpoints
+##  API Endpoints
 
 ### `GET /api/weather?city={city}`
 Get the current weather for a specific city.
