@@ -7,12 +7,24 @@ import TestDataSource from './typeorm.config.test';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { WeatherService } from '../src/modules/weather/services/weather.service';
 
 dotenv.config({ path: '.env.test' });
 
 describe('SubscriptionController (e2e)', () => {
   let app: INestApplication;
   let token: string;
+
+  // Мок WeatherService, щоб не звертатись до реального API
+  const mockWeatherService = {
+    getWeather: jest.fn().mockResolvedValue({
+      temp_c: 10,
+      humidity: 80,
+      condition: { text: 'Sunny', icon: 'sun.png' },
+      wind_kph: 15,
+      wind_dir: 'N',
+    }),
+  };
 
   beforeAll(async () => {
     await TestDataSource.initialize();
@@ -34,7 +46,10 @@ describe('SubscriptionController (e2e)', () => {
         }),
         AppModule,
       ],
-    }).compile();
+    })
+      .overrideProvider(WeatherService)    // Замінюємо реальний WeatherService на мок
+      .useValue(mockWeatherService)
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');
@@ -64,16 +79,13 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/api/subscribe') // Додано /api
+      .post('/api/subscribe')
       .send(subscriptionDto)
       .expect(201);
 
     expect(response.body).toHaveProperty('email', subscriptionDto.email);
     expect(response.body).toHaveProperty('city', subscriptionDto.city);
-    expect(response.body).toHaveProperty(
-      'frequency',
-      subscriptionDto.frequency,
-    );
+    expect(response.body).toHaveProperty('frequency', subscriptionDto.frequency);
     expect(response.body).toHaveProperty('confirmationToken');
 
     token = response.body.confirmationToken; // Збережемо токен для наступних тестів
@@ -86,7 +98,7 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     await request(app.getHttpServer())
-      .post('/api/subscribe') // Додано /api
+      .post('/api/subscribe')
       .send(badDto)
       .expect(400);
   });
@@ -99,14 +111,14 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     const subscribeResponse = await request(app.getHttpServer())
-      .post('/api/subscribe') // Додано /api
+      .post('/api/subscribe')
       .send(subscriptionDto)
       .expect(201);
 
     token = subscribeResponse.body.confirmationToken;
 
     const confirmResponse = await request(app.getHttpServer())
-      .get(`/api/confirm/${token}`) // Додано /api
+      .get(`/api/confirm/${token}`)
       .expect(200);
 
     expect(confirmResponse.body).toHaveProperty('success', true);
@@ -120,7 +132,7 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     const subscribeResponse = await request(app.getHttpServer())
-      .post('/api/subscribe') // Додано /api
+      .post('/api/subscribe')
       .send(subscriptionDto)
       .expect(201);
 
