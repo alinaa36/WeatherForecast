@@ -46,11 +46,15 @@ describe('SubscriptionController (e2e)', () => {
     if (app) {
       await app.close();
     }
-    await TestDataSource.destroy();
+    if (TestDataSource.isInitialized) {
+      await TestDataSource.destroy();
+    }
   });
 
   beforeEach(async () => {
-    await TestDataSource.getRepository('Subscription').clear();
+    if (TestDataSource.isInitialized) {
+      await TestDataSource.getRepository('Subscription').clear();
+    }
   });
 
   function generateEmail() {
