@@ -28,4 +28,4 @@ jobs:
         working-directory: ./weather-forecast-be
         env:
           npm_config_name: test_migration_name
-        run: npm run test:e2e:full
+        run: npm run test:e2e:full --name=MigrationTest
