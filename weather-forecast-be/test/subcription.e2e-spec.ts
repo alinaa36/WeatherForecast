@@ -16,7 +16,6 @@ describe('SubscriptionController (e2e)', () => {
   let app: INestApplication;
   let token: string;
 
-  // Мок WeatherService, щоб не звертатись до реального API
   const mockWeatherService = {
     getWeather: jest.fn().mockResolvedValue({
       temp_c: 10,
@@ -28,7 +27,7 @@ describe('SubscriptionController (e2e)', () => {
   };
 
   const mockMailService = {
-    send: jest.fn().mockResolvedValue(undefined), // нічого не робить
+    send: jest.fn().mockResolvedValue(undefined),
   };
 
   beforeAll(async () => {
@@ -52,12 +51,12 @@ describe('SubscriptionController (e2e)', () => {
         AppModule,
       ],
     })
-      .overrideProvider(WeatherService) // Замінюємо реальний WeatherService на мок
+      .overrideProvider(WeatherService)
       .useValue(mockWeatherService)
       .overrideProvider(WeatherService)
       .useValue(mockWeatherService)
       .overrideProvider(MailService)
-      .useValue(mockMailService) // замокати пошту
+      .useValue(mockMailService) 
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -71,11 +70,10 @@ describe('SubscriptionController (e2e)', () => {
   });
 
   beforeEach(async () => {
-    // Очищуємо таблицю підписок перед кожним тестом, щоб уникнути конфліктів
+   
     await TestDataSource.getRepository('Subscription').clear();
   });
 
-  // Генерація унікального email
   function generateEmail() {
     return `test${Date.now()}@example.com`;
   }
@@ -100,7 +98,7 @@ describe('SubscriptionController (e2e)', () => {
     );
     expect(response.body).toHaveProperty('confirmationToken');
 
-    token = response.body.confirmationToken; // Збережемо токен для наступних тестів
+    token = response.body.confirmationToken;
   });
 
   it('/subscribe (POST) - некоректний запит (без email)', async () => {
