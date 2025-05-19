@@ -26,6 +26,11 @@ jobs:
 
       - name: Run full E2E test flow
         working-directory: ./weather-forecast-be
+      - name: Check JWT_SECRET env variable
+        run: echo "JWT_SECRET is set"
         env:
+          WEATHER_API_URL: https://api.weatherapi.com/v1
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          NODE_ENV: test
           npm_config_name: test_migration_name
         run: npm run test:e2e:full --name=MigrationTest
