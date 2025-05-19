@@ -10,4 +10,4 @@ services:
       POSTGRES_PASSWORD: 12341234
       POSTGRES_DB: weather_forecast_test
     ports:
-      - 5436:5432
+      - 5435:5432
