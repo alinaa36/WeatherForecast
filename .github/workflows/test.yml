@@ -15,6 +15,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
+        working-directory: ./weather-forecast-be
         run: npm ci
 
       - name: Run full E2E test flow
