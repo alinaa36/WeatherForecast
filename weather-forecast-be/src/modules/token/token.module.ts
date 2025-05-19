@@ -11,7 +11,7 @@ import { AppConfigModule } from 'src/config/app-config/config.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('token.secret'),
+        secret: process.env.JWT_SECRET,
       }),
     }),
   ],

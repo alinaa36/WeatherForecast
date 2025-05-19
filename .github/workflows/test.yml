@@ -1,0 +1,39 @@
+name: Run E2E Tests
+
+on: [push, pull_request]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.17.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
+      - name: Install dependencies
+        working-directory: ./weather-forecast-be
+        run: npm ci
+
+      - name: Check JWT_SECRET env variable
+        run: echo "JWT_SECRET is set"
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+      - name: Run full E2E test flow
+        working-directory: ./weather-forecast-be
+        env:
+          WEATHER_API_URL: https://api.weatherapi.com/v1
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          NODE_ENV: test
+          npm_config_name: test_migration_name
+        run: npm run test:e2e:full --name=MigrationTest

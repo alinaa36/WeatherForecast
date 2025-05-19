@@ -7,12 +7,28 @@ import TestDataSource from './typeorm.config.test';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
 import * as request from 'supertest';
+import { WeatherService } from '../src/modules/weather/services/weather.service';
+import { MailService } from 'src/modules/mail/services/mail.service';
 
 dotenv.config({ path: '.env.test' });
 
 describe('SubscriptionController (e2e)', () => {
   let app: INestApplication;
   let token: string;
+
+  const mockWeatherService = {
+    getWeather: jest.fn().mockResolvedValue({
+      temp_c: 10,
+      humidity: 80,
+      condition: { text: 'Sunny', icon: 'sun.png' },
+      wind_kph: 15,
+      wind_dir: 'N',
+    }),
+  };
+
+  const mockMailService = {
+    send: jest.fn().mockResolvedValue(undefined),
+  };
 
   beforeAll(async () => {
     await TestDataSource.initialize();
@@ -34,7 +50,14 @@ describe('SubscriptionController (e2e)', () => {
         }),
         AppModule,
       ],
-    }).compile();
+    })
+      .overrideProvider(WeatherService)
+      .useValue(mockWeatherService)
+      .overrideProvider(WeatherService)
+      .useValue(mockWeatherService)
+      .overrideProvider(MailService)
+      .useValue(mockMailService) 
+      .compile();
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');
@@ -47,69 +70,71 @@ describe('SubscriptionController (e2e)', () => {
   });
 
   beforeEach(async () => {
-    // Очищуємо таблицю підписок перед кожним тестом, щоб уникнути конфліктів
+   
     await TestDataSource.getRepository('Subscription').clear();
   });
 
-  // Генерація унікального email
   function generateEmail() {
     return `test${Date.now()}@example.com`;
   }
 
-  it('/subscribe (POST) - успішна підписка', async () => {
+it('/subscribe (POST) - successful subscription', async () => {
     const subscriptionDto = {
-      email: generateEmail(),
-      city: 'Kyiv',
-      frequency: Frequency.HOURLY,
+        email: generateEmail(),
+        city: 'Kyiv',
+        frequency: Frequency.HOURLY,
     };
 
     const response = await request(app.getHttpServer())
-      .post('/api/subscribe')  // Додано /api
-      .send(subscriptionDto)
-      .expect(201);
+        .post('/api/subscribe')
+        .send(subscriptionDto)
+        .expect(201);
 
     expect(response.body).toHaveProperty('email', subscriptionDto.email);
     expect(response.body).toHaveProperty('city', subscriptionDto.city);
-    expect(response.body).toHaveProperty('frequency', subscriptionDto.frequency);
+    expect(response.body).toHaveProperty(
+        'frequency',
+        subscriptionDto.frequency,
+    );
     expect(response.body).toHaveProperty('confirmationToken');
 
-    token = response.body.confirmationToken; // Збережемо токен для наступних тестів
-  });
+    token = response.body.confirmationToken;
+});
 
-  it('/subscribe (POST) - некоректний запит (без email)', async () => {
+it('/subscribe (POST) - invalid request (missing email)', async () => {
     const badDto = {
-      city: 'Kyiv',
-      frequency: 'HOURLY',
+        city: 'Kyiv',
+        frequency: 'HOURLY',
     };
 
     await request(app.getHttpServer())
-      .post('/api/subscribe')  // Додано /api
-      .send(badDto)
-      .expect(400);
-  });
+        .post('/api/subscribe')
+        .send(badDto)
+        .expect(400);
+});
 
-  it('/confirm/:token (GET) - підтвердження підписки', async () => {
+it('/confirm/:token (GET) - subscription confirmation', async () => {
     const subscriptionDto = {
-      email: generateEmail(),
-      city: 'Kyiv',
-      frequency: Frequency.HOURLY,
+        email: generateEmail(),
+        city: 'Kyiv',
+        frequency: Frequency.HOURLY,
     };
 
     const subscribeResponse = await request(app.getHttpServer())
-      .post('/api/subscribe')  // Додано /api
-      .send(subscriptionDto)
-      .expect(201);
+        .post('/api/subscribe')
+        .send(subscriptionDto)
+        .expect(201);
 
     token = subscribeResponse.body.confirmationToken;
 
     const confirmResponse = await request(app.getHttpServer())
-      .get(`/api/confirm/${token}`)  // Додано /api
-      .expect(200);
+        .get(`/api/confirm/${token}`)
+        .expect(200);
 
     expect(confirmResponse.body).toHaveProperty('success', true);
-  });
+});
 
-  it('/unsubscribe/:token (GET) - відписка', async () => {
+  it('/unsubscribe/:token (GET) - Unsubscribe', async () => {
     const subscriptionDto = {
       email: generateEmail(),
       city: 'Kyiv',
@@ -117,15 +142,13 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     const subscribeResponse = await request(app.getHttpServer())
-      .post('/api/subscribe') // Додано /api
+      .post('/api/subscribe')
       .send(subscriptionDto)
       .expect(201);
 
     token = subscribeResponse.body.confirmationToken;
 
-    await request(app.getHttpServer())
-      .get(`/api/confirm/${token}`) 
-      .expect(200);
+    await request(app.getHttpServer()).get(`/api/confirm/${token}`).expect(200);
 
     const unsubscribeResponse = await request(app.getHttpServer())
       .get(`/api/unsubscribe/${token}`)
