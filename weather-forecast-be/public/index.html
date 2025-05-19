@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Forecast</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 0;
+        margin: 0;
+        background: #f0f0f0;
+        background-image: linear-gradient(120deg, #fce477, #ffda3d);
+        min-height: 100vh;
+      }
+      
+      .container {
+        max-width: 700px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 24px;
+        box-shadow: 0 12px 30px rgba(255, 200, 0, 0.25);
+        border: 2px solid #ffde59;
+      }
+      
+      h1, h2 {
+        text-align: center;
+        color: #222;
+        margin-bottom: 1.5rem;
+      }
+      
+      h1 {
+        color: #d4a000;
+        font-size: 2.5rem;
+        position: relative;
+        padding-bottom: 15px;
+      }
+      
+      h1:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background-color: #ffde59;
+        border-radius: 2px;
+      }
+      
+      h2 {
+        color: #d4a000;
+        font-size: 1.8rem;
+      }
+      
+      .input-group {
+        margin-bottom: 1.5rem;
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #555;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+      
+      input, select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        margin-top: 0.4rem;
+        font-size: 1rem;
+        border: 2px solid #eee;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+      
+      input:focus, select:focus {
+        outline: none;
+        border-color: #ffde59;
+        box-shadow: 0 0 0 3px rgba(255, 222, 89, 0.3);
+      }
+      
+      button {
+        width: 100%;
+        padding: 1rem;
+        background-color: #ffde59;
+        color: #333;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+      }
+      
+      button:hover {
+        background-color: #ffd31a;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .weather-info {
+        margin-top: 2rem;
+        background-color: #fffaeb;
+        padding: 1.5rem;
+        border-radius: 16px;
+        text-align: center;
+        border: 1px dashed #ffde59;
+      }
+      
+      .weather-info h3 {
+        color: #d4a000;
+        margin-top: 0;
+      }
+      
+      .weather-data {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+      
+      .weather-data p {
+        margin: 0.5rem;
+        font-size: 1.1rem;
+        color: #444;
+      }
+      
+      hr {
+        margin: 2rem 0;
+        border: none;
+        height: 1px;
+        background-image: linear-gradient(to right, rgba(255, 222, 89, 0), rgba(255, 222, 89, 0.75), rgba(255, 222, 89, 0));
+      }
+      
+      .card {
+        background-color: white;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 6px 15px rgba(255, 200, 0, 0.15);
+      }
+      
+      .weather-icon {
+        font-size: 3rem;
+        margin-bottom: 0.5rem;
+        color: #ffde59;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          margin: 20px;
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>Weather Forecast</h1>
+        
+        <div class="input-group">
+          <label for="city-input">Enter city name:</label>
+          <input type="text" id="city-input" placeholder="e.g., Kyiv, Lviv" />
+        </div>
+        
+        <button onclick="getWeather()">Get Weather</button>
+        
+        <div class="weather-info" id="weather-info"></div>
+      </div>
+      
+      <hr />
+
+      <div class="card">
+        <h2>Subscribe to Weather Updates</h2>
+        <form id="subscription-form">
+          <div class="input-group">
+            <label for="email">Email address:</label>
+            <input type="email" id="email" required />
+          </div>
+
+          <div class="input-group">
+            <label for="sub-city">City:</label>
+            <input type="text" id="sub-city" required />
+          </div>
+
+          <div class="input-group">
+            <label for="frequency">Notification frequency:</label>
+            <select id="frequency" required>
+              <option value="hourly">Hourly</option>
+              <option value="daily">Daily</option>
+            </select>
+          </div>
+
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      async function getWeather() {
+        const city = document.getElementById('city-input').value.trim();
+        const weatherDiv = document.getElementById('weather-info');
+        if (!city) {
+          weatherDiv.innerHTML = '<p>Please enter a city name.</p>';
+          return;
+        }
+
+        weatherDiv.innerHTML = '<p>Loading weather...</p>';
+        try {
+          const response = await fetch(
+            `/api/weather?city=${encodeURIComponent(city)}`,
+          );
+          if (!response.ok) {
+            throw new Error('Weather request failed');
+          }
+          const data = await response.json();
+          
+          // Determine icon based on weather condition
+          let weatherIcon = '☀️'; // default sunny
+          const condition = data.condition.text.toLowerCase();
+          if (condition.includes('cloud')) {
+            weatherIcon = '☁️';
+          } else if (condition.includes('rain')) {
+            weatherIcon = '🌧️';
+          } else if (condition.includes('snow')) {
+            weatherIcon = '❄️';
+          } else if (condition.includes('thunder')) {
+            weatherIcon = '⛈️';
+          }
+          
+          weatherDiv.innerHTML = `
+            <div class="weather-icon">${weatherIcon}</div>
+            <h3>Weather in ${city}</h3>
+            <div class="weather-data">
+              <p><strong>Temperature:</strong> ${data.temp_c}°C</p>
+              <p><strong>Humidity:</strong> ${data.humidity}%</p>
+              <p><strong>Description:</strong> ${data.condition.text}</p>
+            </div>
+          `;
+        } catch (error) {
+          weatherDiv.innerHTML = '<p>Failed to retrieve weather information.</p>';
+        }
+      }
+
+      document
+        .getElementById('subscription-form')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault();
+
+          const payload = {
+            email: document.getElementById('email').value.trim(),
+            city: document.getElementById('sub-city').value.trim(),
+            frequency: document.getElementById('frequency').value,
+          };
+
+          if (!payload.email || !payload.city || !payload.frequency) {
+            alert('Please fill in all fields.');
+            return;
+          }
+
+          try {
+            const res = await fetch('/api/subscribe', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+
+            if (res.ok) {
+              alert('You have successfully subscribed!');
+              e.target.reset();
+            } else {
+              alert('Subscription failed. Please try again.');
+            }
+          } catch {
+            alert('An error occurred during subscription.');
+          }
+        });
+    </script>
+  </body>
+</html>

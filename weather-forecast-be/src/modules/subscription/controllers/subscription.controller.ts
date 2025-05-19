@@ -9,7 +9,9 @@ export class SubscriptionController {
 
   @Post('subscribe')
   async createSubscription(@Body() subscription: CreateSubscriptionDTO) {
-    return await this.subscriptionService.create(subscription);
+    const existingSubscription =
+      await this.subscriptionService.create(subscription)
+    return existingSubscription;
   }
 
   @Get('confirm/:token')

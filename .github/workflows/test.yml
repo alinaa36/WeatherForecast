@@ -32,8 +32,8 @@ jobs:
       - name: Run full E2E test flow
         working-directory: ./weather-forecast-be
         env:
-          WEATHER_API_URL: https://api.weatherapi.com/v1
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          DATABASE_SSL: ${{ secrets.DATABASE_SSL }}
           NODE_ENV: test
           npm_config_name: test_migration_name
         run: npm run test:e2e:full --name=MigrationTest

@@ -12,6 +12,7 @@ const TestDataSource = new DataSource({
   database: process.env.POSTGRES_DB,
   synchronize: true,
   logging: false,
+  ssl: false,
   entities: ['src/**/**/*.entity.ts'],
   migrations: ['src/database/migrations/*.js'],
   migrationsRun: false,

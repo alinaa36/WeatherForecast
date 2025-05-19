@@ -44,6 +44,7 @@ describe('SubscriptionController (e2e)', () => {
           username: process.env.POSTGRES_USER,
           password: process.env.POSTGRES_PASSWORD,
           database: process.env.POSTGRES_DB,
+          ssl: false,
           synchronize: true,
           logging: false,
           entities: ['src/**/**/*.entity.ts'],
