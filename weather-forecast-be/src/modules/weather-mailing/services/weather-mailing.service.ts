@@ -5,7 +5,7 @@ import { SubscriptionService } from '../../subscription/services/subscription.se
 import { Cron } from '@nestjs/schedule';
 import { Frequency } from '../../subscription/enum/frequency.enum';
 import { TokenService } from '../../token/services/token.service';
-import { ExpiresTime } from '../../token/enum/time.unem';
+import { ExpiresTime } from '../../token/enum/time.enum';
 import { SendUnSubscribe } from '../../subscription/enum/send-email.enum';
 import { ConfigService } from '@nestjs/config';
 
@@ -19,11 +19,10 @@ export class WeatherMailingService {
     private readonly tokenService: TokenService,
     private readonly configService: ConfigService,
   ) {
-    this.baseUrl = this.configService.get<string>('BASE_URL')!;
+    this.baseUrl = this.configService.get<string>('app.url')!;
   }
 
   private async sendWeatherByFrequency(frequency: Frequency) {
-    console.log(`⏰ Надсилаємо повідомлення для частоти: ${frequency}`);
     const subs = await this.subscriptionService.findByFrequency(frequency);
 
     for (const sub of subs) {
