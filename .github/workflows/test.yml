@@ -24,10 +24,13 @@ jobs:
         working-directory: ./weather-forecast-be
         run: npm ci
 
-      - name: Run full E2E test flow
-        working-directory: ./weather-forecast-be
       - name: Check JWT_SECRET env variable
         run: echo "JWT_SECRET is set"
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+      - name: Run full E2E test flow
+        working-directory: ./weather-forecast-be
         env:
           WEATHER_API_URL: https://api.weatherapi.com/v1
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
