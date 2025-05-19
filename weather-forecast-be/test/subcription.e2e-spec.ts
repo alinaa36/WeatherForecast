@@ -8,6 +8,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { TestingModule, Test } from '@nestjs/testing';
 import * as request from 'supertest';
 import { WeatherService } from '../src/modules/weather/services/weather.service';
+import { MailService } from 'src/modules/mail/services/mail.service';
 
 dotenv.config({ path: '.env.test' });
 
@@ -24,6 +25,10 @@ describe('SubscriptionController (e2e)', () => {
       wind_kph: 15,
       wind_dir: 'N',
     }),
+  };
+
+  const mockMailService = {
+    send: jest.fn().mockResolvedValue(undefined), // нічого не робить
   };
 
   beforeAll(async () => {
@@ -47,8 +52,12 @@ describe('SubscriptionController (e2e)', () => {
         AppModule,
       ],
     })
-      .overrideProvider(WeatherService)    // Замінюємо реальний WeatherService на мок
+      .overrideProvider(WeatherService) // Замінюємо реальний WeatherService на мок
       .useValue(mockWeatherService)
+      .overrideProvider(WeatherService)
+      .useValue(mockWeatherService)
+      .overrideProvider(MailService)
+      .useValue(mockMailService) // замокати пошту
       .compile();
 
     app = moduleFixture.createNestApplication();
@@ -85,7 +94,10 @@ describe('SubscriptionController (e2e)', () => {
 
     expect(response.body).toHaveProperty('email', subscriptionDto.email);
     expect(response.body).toHaveProperty('city', subscriptionDto.city);
-    expect(response.body).toHaveProperty('frequency', subscriptionDto.frequency);
+    expect(response.body).toHaveProperty(
+      'frequency',
+      subscriptionDto.frequency,
+    );
     expect(response.body).toHaveProperty('confirmationToken');
 
     token = response.body.confirmationToken; // Збережемо токен для наступних тестів
