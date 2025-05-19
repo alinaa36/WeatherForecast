@@ -43,20 +43,15 @@ describe('SubscriptionController (e2e)', () => {
   });
 
   afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
-    if (TestDataSource.isInitialized) {
-      await TestDataSource.destroy();
-    }
+    await app.close();
   });
 
   beforeEach(async () => {
-    if (TestDataSource.isInitialized) {
-      await TestDataSource.getRepository('Subscription').clear();
-    }
+    // Очищуємо таблицю підписок перед кожним тестом, щоб уникнути конфліктів
+    await TestDataSource.getRepository('Subscription').clear();
   });
 
+  // Генерація унікального email
   function generateEmail() {
     return `test${Date.now()}@example.com`;
   }
@@ -69,7 +64,7 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     const response = await request(app.getHttpServer())
-      .post('/api/subscribe')
+      .post('/api/subscribe') // Додано /api
       .send(subscriptionDto)
       .expect(201);
 
@@ -81,7 +76,7 @@ describe('SubscriptionController (e2e)', () => {
     );
     expect(response.body).toHaveProperty('confirmationToken');
 
-    token = response.body.confirmationToken;
+    token = response.body.confirmationToken; // Збережемо токен для наступних тестів
   });
 
   it('/subscribe (POST) - некоректний запит (без email)', async () => {
@@ -91,7 +86,7 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     await request(app.getHttpServer())
-      .post('/api/subscribe')
+      .post('/api/subscribe') // Додано /api
       .send(badDto)
       .expect(400);
   });
@@ -104,14 +99,14 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     const subscribeResponse = await request(app.getHttpServer())
-      .post('/api/subscribe')
+      .post('/api/subscribe') // Додано /api
       .send(subscriptionDto)
       .expect(201);
 
     token = subscribeResponse.body.confirmationToken;
 
     const confirmResponse = await request(app.getHttpServer())
-      .get(`/api/confirm/${token}`)
+      .get(`/api/confirm/${token}`) // Додано /api
       .expect(200);
 
     expect(confirmResponse.body).toHaveProperty('success', true);
@@ -125,7 +120,7 @@ describe('SubscriptionController (e2e)', () => {
     };
 
     const subscribeResponse = await request(app.getHttpServer())
-      .post('/api/subscribe')
+      .post('/api/subscribe') // Додано /api
       .send(subscriptionDto)
       .expect(201);
 
