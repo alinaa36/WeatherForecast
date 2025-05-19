@@ -20,7 +20,7 @@ describe('WeatherService', () => {
           useValue: {
             get: jest.fn((key: string) => {
               if (key === 'WEATHER_API_KEY') return 'test-api-key';
-              if (key === 'WEATHER_URL') return 'https://api.weatherapi.com/v1';
+              if (key === 'WEATHER_API_URL') return 'https://api.weatherapi.com/v1';
             }),
           },
         },

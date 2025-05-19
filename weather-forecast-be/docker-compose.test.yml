@@ -5,13 +5,9 @@ services:
     image: postgres:latest
     container_name: weather-forecast-test-db
     restart: always
-    env_file:
-      - .env.test
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12341234
       POSTGRES_DB: weather_forecast_test
     ports:
       - 5436:5432
-    volumes:
-      - ./init-test.sql:/docker-entrypoint-initdb.d/init.sql
